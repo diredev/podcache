@@ -1,0 +1,76 @@
+/* Format captions */
+h1 {
+	color: #000063;
+	background-color: #c8effc;
+	margin-top: 0px;
+	padding: 10px;
+	border-radius: 0px 0px 10px 10px;
+}
+
+h2 {
+	color: #000063;
+	margin-top: 0px;
+	padding-left: 10px;
+}
+
+/* Format main DIV */
+div.area {
+	padding-top: 5px;
+	border-top: solid 4px #c8effc;
+	margin-bottom: 20px;
+}
+
+/* Fix for vertical forms (Bootstrap) */
+div.vertical-grid {
+	display: grid;
+}
+
+/* Make the Bootstrap alerts inline */
+.inline-alert {
+	display: inline-block;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: inherit;
+	height: 34px;
+	vertical-align: middle;
+}
+
+th {
+	background-color: #c8effc;
+	border: none !important;
+}
+
+th:first-child {
+	border-top-left-radius: 10px;
+}
+
+th:last-child {
+	border-top-right-radius: 10px;
+}
+
+table {
+	border-radius: 20px;
+border: none !important;
+}
+
+/* Change the style of the striped tables. */
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+	background-color: transparent;
+}
+
+.table-striped > tbody > tr:nth-of-type(2n) {
+	background-color: #e9f9ff;
+}
+
+/* Format deleted feeds in table */
+tr.deleted td:not(:first-child) {
+	text-decoration: line-through;
+	color: darkgrey;
+}
+
+/* Style table footer */
+tfoot > tr.footer > td {
+	border: none;
+	background-color: #def6ff;
+	border-radius: 0px 0px 10px 10px;
+}

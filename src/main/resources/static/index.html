@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+<head>
+	<title>Podcache</title>
+	<meta charset="utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-resource.js"></script>
+	<script src="podcache.js"></script>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="podcache.css" />
+</head>
+<body data-ng-app="podcache" data-ng-controller="feedlist">
+	<h1>Podcache</h1>
+
+	<!-- List existing feeds. -->
+	<div class="area">
+		<h2>Managed Feeds</h2>
+		<table class="table table-bordered feed-table table-striped">
+			<thead>
+				<tr>
+					<th>Actions</th>
+					<th>Name</th>
+					<th>URL</th>
+					<th>Content Type</th>
+					<th>Last Modified</th>
+					<th>Files Downloaded</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="feed in feeds | orderBy:'name'"
+					data-ng-class="{ 'deleted': feed.markedForDeletion }">
+					
+					<td>
+						<a data-ng-href="content/{{ feed.name }}" target="_blank">[feed]</a>
+						<a href="" data-ng-click="showEditForm(feed)">[edit]</a>
+					</td>
+	
+					<td>{{ feed.name }}</td>
+					<td>{{ feed.url }}</td>
+					<td>{{ feed.contentType }}</td>
+					<td>{{ feed.lastModified | date:'short' }}</td>
+					<td>{{ feed.allFilesUpdated }}</td>
+				</tr>
+			</tbody>
+			<tfoot>
+				<tr class="footer">
+					<td colspan="6"><a href="" data-ng-click="showAddForm()">[add]</a></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+	
+	<!-- To add a new feed -->
+	<div class="area vertical-grid" data-ng-if="addNew" data-ng-controller="newFeed">
+		<h2>Add New Feed</h2>
+
+		<form class="form-horizontal" data-ng-submit="addFeed()">
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="name">Name:</label> 
+				<div class="col-sm-10">
+					<input class="form-control" type="text" name="name" data-ng-model="name" required="required" placeholder="<enter name>" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="url">URL:</label>
+				<div class="col-sm-10">
+					<input class="form-control" type="url" name="url" data-ng-model="url" required="required" placeholder="<enter url>" />
+				</div>
+			</div>
+			
+			<div class="col-sm-offset-2 col-sm-10">
+				<input class="btn btn-default" type="submit" value="Add"/>
+				
+				<div class="alert alert-success inline-alert" data-ng-show="success && !failure">Success</div>
+				<div class="alert alert-danger inline-alert" data-ng-show="failure">Failed to add new feed.</div>
+			</div>
+				
+			
+		</form>
+	</div>
+
+	<!-- Edit a feed -->
+	<div class="area vertical-grid" id="editForm" data-ng-if="selectedFeed"
+		data-ng-controller="editFeed">
+		<h2>Edit Feed '{{ selectedFeed.name }}'</h2>
+
+		<form class="form-horizontal" data-ng-submit="update()">
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="url">URL:</label>
+				<div class="col-sm-10">
+					<input class="form-control" type="url" name="url" data-ng-model="url" required="required" />
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="contentType">Content Type:</label>
+				<div class="col-sm-10">
+					<input class="form-control" type="text" name="contentType" data-ng-model="contentType" required="required" />
+				</div>
+			</div>
+			
+			<div class="form-group">
+				<label class="control-label col-sm-2" for="contentType">Delete:</label>
+				<div class="col-sm-10">
+					<input class="checkbox" type="checkbox" name="markedForDeletion" data-ng-model="markedForDeletion" />
+				</div>
+			</div>
+			
+			<div class="col-sm-offset-2 col-sm-10">
+				<input class="btn btn-default" type="submit" value="Update" />
+				
+				<div class="alert alert-success inline-alert" data-ng-show="success && !failure">Success</div>
+				<div class="alert alert-danger inline-alert" data-ng-show="failure">Failed to edit feed.</div>
+			</div>
+		</form>
+	</div>
+</body>
+</html>

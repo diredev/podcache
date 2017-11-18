@@ -1,0 +1,124 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- SpringBoot Parent -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.5.8.RELEASE</version>
+		<relativePath />
+	</parent>
+
+	<groupId>at.dire.podcache</groupId>
+	<artifactId>podcache</artifactId>
+	<version>0.1.0</version>
+	<packaging>jar</packaging>
+
+	<name>podcache</name>
+	<description>A microservice that downloads podcasts, stores them locally and provides permanent access.</description>
+	<url>https://github.com/diredev/podcache</url>
+	<inceptionYear>2017</inceptionYear>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>1.8</java.version>
+		<checkerframework.version>2.2.2</checkerframework.version>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+
+				<configuration>
+					<excludes>
+						<!-- Exclude the checker compile dependencies. No need for those in the final JAR. -->
+						<exclude>
+							<groupId>org.checkerframework</groupId>
+							<artifactId>checker</artifactId>
+						</exclude>
+						<exclude>
+							<groupId>org.checkerframework</groupId>
+							<artifactId>jdk8</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- Compiler with Checker Framework -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+
+					<annotationProcessors>
+						<annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+					</annotationProcessors>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- Spring dependencies -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<!-- Use Jetty instead of Tomcat. -->
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jetty</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Other -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.rometools</groupId>
+			<artifactId>rome</artifactId>
+			<version>1.8.0</version>
+		</dependency>
+
+		<!-- Checker Framework -->
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker-qual</artifactId>
+			<version>${checkerframework.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker</artifactId>
+			<version>${checkerframework.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>jdk8</artifactId>
+			<version>${checkerframework.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+</project>

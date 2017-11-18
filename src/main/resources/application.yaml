@@ -1,0 +1,32 @@
+# Cutom settings  
+podcache:
+  # Main directory. Default will create 'podcache' below the working directory
+  data.directory: podcache
+  
+  # Directory that holds the database.
+  db.directory: ${podcache.data.directory}/db
+  
+  # Directory for feed content files.
+  content.directory: ${podcache.data.directory}/feeds
+  
+  # Interval for automatic update in 'cron' format. Use "0 1 0 * * ?" for daily at 1 AM.
+  update.interval: "0 1 0 * * ?"
+
+# Server configuration
+server:
+  contextPath: /
+  port: 7332
+  
+  # Configure logging
+logging:
+  level.root: WARN
+  level.at.dire: INFO
+
+# Configure file database access
+spring:
+  jpa:
+    # Spring will recreate the file DB by default. Do update only.
+    hibernate.ddl-auto: update
+  datasource:
+    # Use a file database.
+    url: jdbc:hsqldb:file:${podcache.db.directory}/db/hsql-db
