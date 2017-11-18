@@ -1,5 +1,6 @@
 package at.dire.podcache.service;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -10,14 +11,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.util.UriUtils;
 
 import at.dire.podcache.FeedManager;
 import at.dire.podcache.data.Feed;
@@ -100,6 +104,18 @@ public class ContentController {
 		}
 
 		PathResource resource = new PathResource(file);
-		return ResponseEntity.ok(resource);
+		BodyBuilder responseBuilder = ResponseEntity.ok();
+
+		// Fix download of files as "f.txt" when extensions aren't matched (".+" above) by adding our own filename.
+		// See https://pivotal.io/security/cve-2015-5211 for details on this behavior.
+		try {
+			HttpHeaders headers = new HttpHeaders();
+			responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=" + UriUtils.encodePathSegment(file.getFileName().toString(), "UTF-8"));
+			responseBuilder.headers(headers);
+		} catch(UnsupportedEncodingException e) {
+			throw new RuntimeException("Failed to encode filename due to encoding. This is not supposed to happen.", e);
+		}
+
+		return responseBuilder.body(resource);
 	}
 }
