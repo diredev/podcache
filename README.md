@@ -22,6 +22,7 @@ The following components are used to implement the service backend and a simple 
 * [Checker Framework](https://checkerframework.org)
 * [AngularJS](https://angularjs.org)
 * [Bootstrap CSS](https://getbootstrap.com/docs/3.3/css)
+* [OpenIconic](https://useiconic.com/open)
 
 ## Configuration Options
 Make sure to configure the application properly prior to running it. To easily change the settings create a file called "application.yaml" next to the executable JAR file.
