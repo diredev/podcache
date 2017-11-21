@@ -29,4 +29,4 @@ spring:
     hibernate.ddl-auto: update
   datasource:
     # Use a file database.
-    url: jdbc:hsqldb:file:${podcache.db.directory}/db/hsql-db
+    url: jdbc:hsqldb:file:${podcache.db.directory}/hsql-db
