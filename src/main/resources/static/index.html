@@ -8,6 +8,7 @@
 	<script src="podcache.js"></script>
 	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic-bootstrap.min.css" />
 	<link rel="stylesheet" href="podcache.css" />
 </head>
 <body data-ng-app="podcache" data-ng-controller="feedlist">
@@ -19,7 +20,7 @@
 		<table class="table table-bordered feed-table table-striped">
 			<thead>
 				<tr>
-					<th>Actions</th>
+					<th></th>
 					<th>Name</th>
 					<th>URL</th>
 					<th>Content Type</th>
@@ -32,8 +33,8 @@
 					data-ng-class="{ 'deleted': feed.markedForDeletion }">
 					
 					<td>
-						<a data-ng-href="content/{{ feed.name }}" target="_blank">[feed]</a>
-						<a href="" data-ng-click="showEditForm(feed)">[edit]</a>
+						<a data-ng-href="content/{{ feed.name }}" target="_blank" class="oi oi-rss-alt" title="Access Feed"></a>
+						<a href="" data-ng-click="showEditForm(feed)" class="oi oi-pencil" title="Edit"></a>
 					</td>
 	
 					<td>{{ feed.name }}</td>
@@ -45,7 +46,9 @@
 			</tbody>
 			<tfoot>
 				<tr class="footer">
-					<td colspan="6"><a href="" data-ng-click="showAddForm()">[add]</a></td>
+					<td colspan="6">
+						<a href="" data-ng-click="showAddForm()" class="oi oi-plus" title="Add"></a>
+					</td>
 				</tr>
 			</tfoot>
 		</table>
