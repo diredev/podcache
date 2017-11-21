@@ -83,10 +83,7 @@ public class UpdateService implements ApplicationRunner {
 		// Interpret mode
 		boolean forceUpdate = UPDATE_MODE_FORCE.equalsIgnoreCase(updateMode);
 
-		try {
-			this.updater.updateAll(forceUpdate);
-		} catch(IOException e) {
-			LOG.error("Failed to update feeds on startup.", e);
-		}
+		// updateAsync(forceUpdate);
+		this.updater.updateAllAsync(forceUpdate);
 	}
 }

@@ -12,6 +12,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +51,23 @@ public class FeedUpdater {
 	public FeedUpdater(FeedManager feedManager, FeedURLBuilder urlBuilder) {
 		this.feedManager = Objects.requireNonNull(feedManager);
 		this.urlBuilder = Objects.requireNonNull(urlBuilder);
+	}
+
+	/**
+	 * The same as {@link #updateAll(boolean)} but called asynchronously through Spring.
+	 * 
+	 * @param forceUpdateURLs true to force update of files and URLs
+	 * @throws IOException when the update fails
+	 */
+	@Async
+	@Transactional(rollbackFor = IOException.class)
+	public void updateAllAsync(boolean forceUpdateURLs) throws IOException {
+		try {
+			updateAll(forceUpdateURLs);
+		} catch(IOException e) {
+			LOG.error("Failed to update all feeds", e);
+			throw e;
+		}
 	}
 
 	/**
