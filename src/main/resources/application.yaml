@@ -28,5 +28,5 @@ spring:
     # Spring will recreate the file DB by default. Do update only.
     hibernate.ddl-auto: update
   datasource:
-    # Use a file database.
-    url: jdbc:hsqldb:file:${podcache.db.directory}/hsql-db
+    # Configure file database.
+    url: jdbc:hsqldb:file:${podcache.db.directory}/hsql-db;hsqldb.tx=mvlocks
