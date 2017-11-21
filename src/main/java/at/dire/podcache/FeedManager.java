@@ -151,6 +151,11 @@ public class FeedManager {
 		this.feedRepo.save(feeds);
 	}
 
+	/**
+	 * Update the given feed in the database.
+	 * 
+	 * @param feed feed
+	 */
 	@Transactional
 	public void update(Feed feed) {
 		this.feedRepo.save(feed);

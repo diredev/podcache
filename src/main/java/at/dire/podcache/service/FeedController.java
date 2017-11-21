@@ -53,6 +53,7 @@ public class FeedController {
 	 * Add a new feed.
 	 * 
 	 * @param feed feed
+	 * @return the added feed
 	 * @throws IOException when downloading the feed fails
 	 */
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

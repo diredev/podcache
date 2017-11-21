@@ -1,5 +1,5 @@
 # PodCache
-Provides access to Podcast episodes. Possibly forever.
+Provide access to Podcast episodes. Possibly forever.
 
 ---
 
@@ -35,7 +35,7 @@ To change this behavior, add the following line to the settings file:
 server.address: HOST_NAME
 ```
 
-Replace "HOST_NAME" with either your server's host name or IP address.
+Replace `HOST_NAME` with either your server's host name or IP address.
 
 ### Server Port
 The application will use the port 7332 by default.
@@ -88,7 +88,7 @@ Place the service's JAR file into any directory, add the configuration and then 
 java -jar podcache-x.y.z.jar
 ```
 
-Once the application is started, you can access the application through your web browser (port varies depending on configuration):
+Once the application is started, you can access the application through your web browser:
 
 ```
 http://localhost:7332/
@@ -96,7 +96,7 @@ http://localhost:7332/
 
 Use this web interface to add new feeds. Feeds will be automatically updated once a day as long as the application is running. Also note that the podcast files are only updated once a day as well.
 
-Click the `[feed]` link in the web frontend to get a feed's URL that you can then add to a podcatcher of your choosing.
+Click the `[feed]` link on the web frontend to get a feed's URL that you can then add to a podcatcher of your choosing.
 
 ## Comparable tools
 None that I know of.
