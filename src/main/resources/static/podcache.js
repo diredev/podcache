@@ -30,12 +30,12 @@ app.controller('feedlist', function(Feed, $scope) {
 
 // Sub-Controller for adding additional feeds.
 app.controller('newFeed', function($scope, Feed) {
-	$scope.failure = false;
+	$scope.errorMessage = '';
 	$scope.success = false;
 	
 	// Function to add a feed.
 	$scope.addFeed = function() {
-		$scope.failure = false;
+		$scope.errorMessage = '';
 		$scope.success = false;
 		
 		var newFeed = new Feed({name: $scope.name, url: $scope.url });
@@ -50,9 +50,9 @@ app.controller('newFeed', function($scope, Feed) {
 			
 			// Mark for success.
 			$scope.success = true;
-		}, function(error) {
+		}, function(response) {
 			// Mark failure.
-			$scope.failure = true;
+			$scope.errorMessage = response.data.message;
 			$scope.success = false;
 		});
     }
@@ -61,7 +61,7 @@ app.controller('newFeed', function($scope, Feed) {
 //Sub-Controller for editing an existing feed.
 app.controller('editFeed', function($scope, Feed) {
 	$scope.success = false;
-	$scope.failure = false;
+	$scope.errorMessage = '';
 	
 	$scope.$parent.$watch('selectedFeed',function(value) {
 		//$scope.name = value.name;
@@ -69,7 +69,7 @@ app.controller('editFeed', function($scope, Feed) {
 		$scope.contentType = value.contentType;
 		$scope.markedForDeletion = value.markedForDeletion;
 		$scope.success = false;
-		$scope.failure = false;
+		$scope.errorMessage = '';
 	});
 
 	$scope.update = function() {
@@ -80,7 +80,7 @@ app.controller('editFeed', function($scope, Feed) {
 		updatedFeed.contentType = $scope.contentType;
 		updatedFeed.markedForDeletion = $scope.markedForDeletion;
 
-		$scope.failure = false;
+		$scope.errorMessage = '';
 		$scope.success = false;
 		
 		Feed.update({ name: updatedFeed.name }, updatedFeed, function() {
@@ -89,9 +89,9 @@ app.controller('editFeed', function($scope, Feed) {
 			selectedFeed.markedForDeletion = updatedFeed.markedForDeletion;
 			
 			$scope.success = true;
-		}, function() {
+		}, function(response) {
 			$scope.success = false;
-			$scope.failure = true;
+			$scope.errorMessage = response.data.message;
 		});
 	}
 });

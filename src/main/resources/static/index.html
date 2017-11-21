@@ -77,7 +77,7 @@
 				<input class="btn btn-default" type="submit" value="Add"/>
 				
 				<div class="alert alert-success inline-alert" data-ng-show="success && !failure">Success</div>
-				<div class="alert alert-danger inline-alert" data-ng-show="failure">Failed to add new feed.</div>
+				<div class="alert alert-danger inline-alert" data-ng-show="errorMessage">Failed to add new feed: {{errorMessage}}</div>
 			</div>
 				
 			
@@ -115,7 +115,7 @@
 				<input class="btn btn-default" type="submit" value="Update" />
 				
 				<div class="alert alert-success inline-alert" data-ng-show="success && !failure">Success</div>
-				<div class="alert alert-danger inline-alert" data-ng-show="failure">Failed to edit feed.</div>
+				<div class="alert alert-danger inline-alert" data-ng-show="errorMessage">Failed to edit feed: {{errorMessage}}</div>
 			</div>
 		</form>
 	</div>
