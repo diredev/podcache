@@ -59,7 +59,7 @@
 			<div class="form-group">
 				<label class="control-label col-sm-2" for="name">Name:</label> 
 				<div class="col-sm-10">
-					<input class="form-control" type="text" name="name" data-ng-model="name" required="required" placeholder="<enter name>" />
+					<input class="form-control" title="Enter a unique name for the feed. Letters and numbers only." type="text" name="name" data-ng-model="name" pattern="[a-zA-Z0-9-_]+" required="required" placeholder="<enter name>" />
 				</div>
 			</div>
 

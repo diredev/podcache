@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.regex.Pattern;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -24,6 +25,9 @@ import at.dire.podcache.data.FeedRepository;
 public class FeedManager {
 	/** Logger */
 	private static final Logger LOG = LoggerFactory.getLogger(FeedManager.class);
+
+	/** Pattern for allowed {@link Feed#getName() names}. */
+	private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9-_]+$");
 
 	/** The DB repository for managed feeds */
 	private final FeedRepository feedRepo;
@@ -113,6 +117,10 @@ public class FeedManager {
 	 */
 	@Transactional(rollbackFor = IOException.class)
 	public Feed add(String name, URL url) throws IOException {
+		// Validate the name, must only contain letters and numbers.
+		if(!NAME_PATTERN.matcher(name).matches())
+			throw new IllegalArgumentException("Invalid feed name. Must only contain letters and numbers.");
+
 		Path tempFile = Files.createTempFile("feed", ".xml");
 
 		try {
