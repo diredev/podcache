@@ -1,34 +1,21 @@
 # PodCache
-Provide access to Podcast episodes. Possibly forever.
+Provide access to podcast episodes. Possibly forever.
 
 ---
 
 ## Purpose
-Podcache was designed for a very specific use case: It provides means to access Podcast episodes for an unlimited time, even if they have already been removed from the original Podcast XML. This is intended for users that aren't tech-savvy and do not use their personal computers often but still want to be able to access a Podcast's episodes a while later. 
+Podcache was created for a very specific use case: It provides means to access podcast episodes for an unlimited time, even if they have already been removed from the original podcast XML. This is intended for users that aren't tech-savvy and do not use their personal computers often but still want to be able to access a Podcast's episodes a while later. 
 
 Another goal of this application is that there needs to be as little change for the end-user as possible (i.e. no need to learn yet another application, etc.). 
 
 ### How does it work
-This application lives between the original feed and the user's podcatcher. Podcache will update feeds and download files automatically and in turn provides it's own feeds to users, which contain a full list of all known episodes. The only thing that changes for the end user is the feed's URL. 
+Podcache is run as a small service that lives between the original feed and a user's podcatcher. Feeds are updated automatically and all files are downloaded automatically. It then provides provides it's own feeds to users, consisting of all collected episodes so far. The only thing that changes for the end user is the feed's URL.
 
-### Components Used
-The following components are used to implement the service backend and a simple web frontend.
-
-* Java 8
-* Spring Framework ([SpringBoot](http://projects.spring.io/spring-boot), [Spring Data JPA](http://projects.spring.io/spring-data-jpa))
-* [HSQLDB](http://hsqldb.org)
-* [RomeTools](https://rometools.github.io/rome)
-* [Apache HTTPClient](https://hc.apache.org/httpcomponents-client-ga)
-* [Checker Framework](https://checkerframework.org)
-* [AngularJS](https://angularjs.org)
-* [Bootstrap CSS](https://getbootstrap.com/docs/3.3/css)
-* [OpenIconic](https://useiconic.com/open)
-
-## Configuration Options
-Make sure to configure the application properly prior to running it. To easily change the settings create a file called "application.yaml" next to the executable JAR file.
+## Application Setup
+Podcatcher consists of a single, complete binary, an executable JAR file. Make sure to read and customize the following settings prior to running the application. To apply these, create a file called "application.yaml" next to the JAR file.
 
 ### Server Address
-The default settings will provide URLs to "localhost" only. This means that you will only ever be able to access your feeds locally.
+The default settings will provide URLs for `localhost` only. This means that you will only ever be able to access your feeds from another machine.
 
 To change this behavior, add the following line to the settings file:
 
@@ -81,7 +68,6 @@ To help reporting issues, you can also redirect all logging to a log file:
 logging.file: /tmp/podcache.log
 ```
 
-
 ## Running the application
 Place the service's JAR file into any directory, add the configuration and then execute the JAR: 
 
@@ -95,9 +81,28 @@ Once the application is started, you can access the application through your web
 http://localhost:7332/
 ```
 
+![Simple Web Interface](screenshot.png)
+
 Use this web interface to add new feeds. Feeds will be automatically updated once a day as long as the application is running. Also note that the podcast files are only updated once a day as well.
 
-Click the `[feed]` link on the web frontend to get a feed's URL that you can then add to a podcatcher of your choosing.
+Click the RSS icon on the web frontend to get a feed's URL that you can then add to a podcatcher of your choosing.
+
+## Implementation Details
+### Components Used
+The following components are used to implement the service backend and a simple web frontend.
+
+* Java 8
+* Spring Framework ([SpringBoot](http://projects.spring.io/spring-boot), [Spring Data JPA](http://projects.spring.io/spring-data-jpa))
+* [HSQLDB](http://hsqldb.org)
+* [RomeTools](https://rometools.github.io/rome)
+* [Apache HTTPClient](https://hc.apache.org/httpcomponents-client-ga)
+* [Checker Framework](https://checkerframework.org)
+* [AngularJS](https://angularjs.org)
+* [Bootstrap CSS](https://getbootstrap.com/docs/3.3/css)
+* [OpenIconic](https://useiconic.com/open)
+
+### Building the Application
+Podcache is implemented as a small Maven Project using the `spring-boot-maven-plugin`. The final JAR file is created through Maven on build.
 
 ## Comparable tools
 None that I know of.
