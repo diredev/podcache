@@ -15,7 +15,7 @@
 	<h1>Podcache</h1>
 
 	<!-- List existing feeds. -->
-	<div class="area">
+	<div>
 		<h2>Managed Feeds</h2>
 		<table class="table table-bordered feed-table table-striped">
 			<thead>
@@ -55,7 +55,7 @@
 	</div>
 	
 	<!-- To add a new feed -->
-	<div class="area vertical-grid" data-ng-if="addNew" data-ng-controller="newFeed">
+	<div class="vertical-grid" data-ng-if="addNew" data-ng-controller="newFeed">
 		<h2>Add New Feed</h2>
 
 		<form class="form-horizontal" data-ng-submit="addFeed()">
@@ -74,8 +74,9 @@
 			</div>
 			
 			<div class="col-sm-offset-2 col-sm-10">
-				<input class="btn btn-default" type="submit" value="Add"/>
+				<input class="btn btn-default" data-ng-disabled="inProgress" type="submit" value="Add"/>
 				
+				<span class="oi oi-cog throbber" data-ng-show="inProgress"></span>
 				<div class="alert alert-success inline-alert" data-ng-show="success && !failure">Success</div>
 				<div class="alert alert-danger inline-alert" data-ng-show="errorMessage">Failed to add new feed: {{errorMessage}}</div>
 			</div>
@@ -85,7 +86,7 @@
 	</div>
 
 	<!-- Edit a feed -->
-	<div class="area vertical-grid" id="editForm" data-ng-if="selectedFeed"
+	<div class="vertical-grid" id="editForm" data-ng-if="selectedFeed"
 		data-ng-controller="editFeed">
 		<h2>Edit Feed '{{ selectedFeed.name }}'</h2>
 
@@ -112,8 +113,9 @@
 			</div>
 			
 			<div class="col-sm-offset-2 col-sm-10">
-				<input class="btn btn-default" type="submit" value="Update" />
+				<input class="btn btn-default" data-ng-disabled="inProgress" type="submit" value="Update" />
 				
+				<span class="oi oi-cog throbber" data-ng-show="inProgress" title=""></span>
 				<div class="alert alert-success inline-alert" data-ng-show="success && !failure">Success</div>
 				<div class="alert alert-danger inline-alert" data-ng-show="errorMessage">Failed to edit feed: {{errorMessage}}</div>
 			</div>

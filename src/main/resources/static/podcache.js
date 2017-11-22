@@ -32,11 +32,13 @@ app.controller('feedlist', function(Feed, $scope) {
 app.controller('newFeed', function($scope, Feed) {
 	$scope.errorMessage = '';
 	$scope.success = false;
+	$scope.inProgress = false;
 	
 	// Function to add a feed.
 	$scope.addFeed = function() {
 		$scope.errorMessage = '';
 		$scope.success = false;
+		$scope.inProgress = true;
 		
 		var newFeed = new Feed({name: $scope.name, url: $scope.url });
 		
@@ -50,10 +52,12 @@ app.controller('newFeed', function($scope, Feed) {
 			
 			// Mark for success.
 			$scope.success = true;
+			$scope.inProgress = false;
 		}, function(response) {
 			// Mark failure.
 			$scope.errorMessage = response.data.message;
 			$scope.success = false;
+			$scope.inProgress = false;
 		});
     }
 });
@@ -62,6 +66,7 @@ app.controller('newFeed', function($scope, Feed) {
 app.controller('editFeed', function($scope, Feed) {
 	$scope.success = false;
 	$scope.errorMessage = '';
+	$scope.inProgress = false;
 	
 	$scope.$parent.$watch('selectedFeed',function(value) {
 		//$scope.name = value.name;
@@ -70,9 +75,12 @@ app.controller('editFeed', function($scope, Feed) {
 		$scope.markedForDeletion = value.markedForDeletion;
 		$scope.success = false;
 		$scope.errorMessage = '';
+		$scope.inProgress = false;
 	});
 
 	$scope.update = function() {
+		$scope.inProgress = true;
+		
 		var selectedFeed = $scope.$parent.selectedFeed;
 		
 		var updatedFeed = angular.copy(selectedFeed);
@@ -89,9 +97,11 @@ app.controller('editFeed', function($scope, Feed) {
 			selectedFeed.markedForDeletion = updatedFeed.markedForDeletion;
 			
 			$scope.success = true;
+			$scope.inProgress = false;
 		}, function(response) {
 			$scope.success = false;
 			$scope.errorMessage = response.data.message;
+			$scope.inProgress = false;
 		});
 	}
 });

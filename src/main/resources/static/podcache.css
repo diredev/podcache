@@ -76,3 +76,18 @@ a.oi {
 	padding-left: 2px;
 }
 
+/* Throbber with animation (may not work in all browsers) */
+.throbber {
+	vertical-align: middle;
+	-webkit-animation: rotation 6s infinite linear;
+	font-size: 20px;
+}
+
+@-webkit-keyframes rotation {
+	from {
+		-webkit-transform: rotate(0deg);
+	}
+	to {
+		-webkit-transform: rotate(359deg);
+	}
+}
