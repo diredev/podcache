@@ -217,10 +217,17 @@ public class FeedUpdater {
 			// Next we download all the attachments.
 			for(SyndEnclosure enclosure : entry.getEnclosures()) {
 				Path newContentFile;
+				String enclosureUrl = enclosure.getUrl();
+
+				// Handle NULL value in enclosure URL (broken feed)
+				if(enclosureUrl == null || enclosureUrl.isEmpty()) {
+					LOG.warn("Enclosure for feed entry '{}' has no URL. Skipping.", entry.getLink());
+					continue;
+				}
 
 				try {
 					newContentFile = this.feedManager.getContentManager().download(feed.getName(),
-							new URL(enclosure.getUrl()), false);
+							new URL(enclosureUrl), false);
 				} catch(IOException e) {
 					LOG.error(
 							String.format("Failed to download entry '%s' of feed '%s'. Will continue with next entry.",
