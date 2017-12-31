@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.regex.Pattern;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -93,7 +94,7 @@ public class FeedManager {
 	 * @return feed file
 	 */
 	public Path getFeedFile(String name) {
-		return this.contentManager.getFeedFile(name);
+		return this.contentManager.getFile(name, ContentManager.FEED_FILE);
 	}
 
 	/**
@@ -131,14 +132,16 @@ public class FeedManager {
 			this.feedRepo.save(feed);
 
 			// If that was OK, we add the file to the content manager.
-			Path actualFeedFile = this.contentManager.getFeedFile(name);
+			Path originalFeedFile = this.contentManager.getFile(name, ContentManager.ORIGINAL_FEED_FILE);
+			Path actualFeedFile = this.contentManager.getFile(name, ContentManager.FEED_FILE);
 
-			// Do not copy if the feed file exists already.
+			// Copy to original file location.
+			Files.createDirectories(originalFeedFile.getParent());
+			Files.move(tempFile, originalFeedFile, StandardCopyOption.REPLACE_EXISTING);
+
+			// Copy to modified location, if the file does not exist already.
 			if(Files.notExists(actualFeedFile)) {
-				// Create the directory if needed.
-				Files.createDirectories(actualFeedFile.getParent());
-
-				Files.move(tempFile, actualFeedFile);
+				Files.copy(originalFeedFile, actualFeedFile);
 			} else
 				LOG.warn("Feed file '{}' already exists. Will merge on next update.", actualFeedFile);
 

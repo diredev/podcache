@@ -22,6 +22,7 @@ import com.rometools.rome.feed.synd.SyndFeed;
 
 import at.dire.podcache.data.Feed;
 import at.dire.podcache.service.FeedURLBuilder;
+import at.dire.podcache.util.DownloadResponse;
 import at.dire.podcache.util.FeedUtils;
 
 /**
@@ -110,6 +111,60 @@ public class FeedUpdater {
 	}
 
 	/**
+	 * Update the {@link ContentManager#ORIGINAL_FEED_FILE feed file} for the given feed.
+	 * 
+	 * <p>
+	 * This method takes last update date and file existence into account. When the method is done, the (merged)
+	 * original feed file will exist on the file system.
+	 * </p>
+	 * 
+	 * @param feed the feed
+	 * @return the new feed's data
+	 * @throws IOException when the download fails
+	 */
+	private OriginalFeedData updateOriginalFeed(Feed feed) throws IOException {
+		SyndFeed feedData;
+
+		// Does a local (original) file exist?
+		Path originalFile = this.feedManager.getContentManager().getFile(feed.getName(),
+				ContentManager.ORIGINAL_FEED_FILE);
+		boolean originalFileExists = Files.exists(originalFile);
+
+		// Download the feed
+		try(DownloadResponse response = this.feedManager.getContentManager().download(feed, !originalFileExists)) {
+			if(response.isUnchanged()) {
+				// Feed is unchanged and original file exists (cannot normally happen otherwise). Load feed and return.
+				LOG.debug("Feed not updated and original file exists. Loading original file at '{}'.", originalFile);
+				return new OriginalFeedData(FeedUtils.read(originalFile), false);
+			}
+
+			// Load to memory using Rome API
+			LOG.debug("Loading new original feed from download response.");
+			feedData = FeedUtils.read(response.getContent());
+		}
+
+		// Create a backup of the original file (which will exist at
+		if(originalFileExists) {
+			Path backupFile = originalFile.resolveSibling(originalFile.getFileName().toString() + ".save");
+			LOG.debug("Creating backup of original stream at '{}'.", backupFile);
+			Files.copy(originalFile, backupFile, StandardCopyOption.REPLACE_EXISTING);
+
+			// Original file exists. Load, merge entries and save.
+			LOG.debug("Loading ");
+			SyndFeed originalData = FeedUtils.read(originalFile);
+			FeedUtils.mergeEntries(originalData, feedData);
+
+			// Also set new data variable to the merged feed.
+			feedData = originalData;
+		}
+
+		// Save the original feed data (may be merged data now)
+		FeedUtils.write(feedData, originalFile);
+
+		return new OriginalFeedData(feedData, true);
+	}
+
+	/**
 	 * Update the given feed's content by downloading new data. Will then also download all content files and Note that
 	 * this logic will not update the feed in the database.
 	 * 
@@ -119,57 +174,27 @@ public class FeedUpdater {
 	 * @return true if the content was updated
 	 */
 	private boolean update(Feed feed, boolean forceUpdateURLs) throws IOException {
-		// Does the feed file exist?
-		Path feedFile = this.feedManager.getContentManager().getFeedFile(feed.getName());
-		SyndFeed feedData = null;
-		boolean newDataAvailable = false;
-		boolean updated = false;
-		boolean createBackup = true;
+		// Download the feed and load original feed.
+		OriginalFeedData originalFeedData = updateOriginalFeed(feed);
+		boolean updated = originalFeedData.isUpdated();
+		
+		// Update the URLs found in the feed (if any new data was downloaded)
+		Path feedFile = this.feedManager.getFeedFile(feed.getName());
 
-		if(Files.notExists(feedFile)) {
-			LOG.warn("Failed to find feed file '{}' for feed '{}'. Downloading now.", feedFile, feed);
-			this.feedManager.getContentManager().downloadToFile(feed, feedFile);
-			newDataAvailable = true;
-			createBackup = false;
-		} else {
-			// Download the newest feed (memory only)
-			SyndFeed newFeedData = this.feedManager.getContentManager().downloadFeed(feed);
-
-			if(newFeedData != null) {
-				LOG.debug("Got new feed data for feed '{}'. Merging with existing data.", feed);
-				newDataAvailable = true;
-				updated = true;
-
-				// Got new feed data. Merge with the existing feed.
-				feedData = FeedUtils.read(feedFile);
-				FeedUtils.mergeEntries(feedData, newFeedData);
-			}
-		}
-
-		// Download missing files.
-		if(newDataAvailable || forceUpdateURLs || !feed.isAllFilesUpdated()) {
-			// Load the feed file if not done above already.
-			if(feedData == null)
-				feedData = FeedUtils.read(feedFile);
-
+		if(updated || forceUpdateURLs || !feed.isAllFilesUpdated() || Files.notExists(feedFile)) {
 			LOG.debug("Downloading missing content files for feed '{}'.", feed);
-			
-			if(updateContentFiles(feed, feedData)) {
-				feed.setAllFilesUpdated(true);
 
-				// Backup the original file.
-				if(createBackup) {
-					LOG.debug("Backing up original feed file '{}' prior to download.", feedFile);
-					Files.copy(feedFile, feedFile.resolveSibling(feedFile.getFileName().toString() + ".backup"),
-							StandardCopyOption.REPLACE_EXISTING);
-				}
+			if(updateContentFiles(feed, originalFeedData.getData())) {
+				feed.setAllFilesUpdated(true);
 
 				// Save feed file.
 				LOG.debug("Saving updated feed data for feed '{}' to '{}'", feed, feedFile);
-				FeedUtils.write(feedData, feedFile);
-				updated = true;
-			} else
+				FeedUtils.write(originalFeedData.getData(), feedFile);
+				return true;
+			} else {
 				LOG.debug("Feed content  of '{}' hasn't been updated.", feed);
+				return false;
+			}
 		}
 
 		return updated;
@@ -195,7 +220,7 @@ public class FeedUpdater {
 
 				try {
 					newContentFile = this.feedManager.getContentManager().download(feed.getName(),
-						new URL(enclosure.getUrl()), false);
+							new URL(enclosure.getUrl()), false);
 				} catch(IOException e) {
 					LOG.error(
 							String.format("Failed to download entry '%s' of feed '%s'. Will continue with next entry.",
@@ -224,5 +249,47 @@ public class FeedUpdater {
 		}
 
 		return anyUpdated;
+	}
+
+	/**
+	 * Utility structure holding feed data and update information.
+	 * 
+	 * @author diredev
+	 */
+	private static class OriginalFeedData {
+		/** Content of the feed */
+		private final SyndFeed data;
+
+		/** True if new data was downloaded */
+		private final boolean updated;
+
+		/**
+		 * Returns the feed' data.
+		 * 
+		 * @return data
+		 */
+		public SyndFeed getData() {
+			return data;
+		}
+
+		/**
+		 * Returns true if new data was downloaded.
+		 * 
+		 * @return boolean
+		 */
+		public boolean isUpdated() {
+			return updated;
+		}
+
+		/**
+		 * Creates a new instance.
+		 * 
+		 * @param data feed data
+		 * @param updated true if new data was downloaded
+		 */
+		public OriginalFeedData(SyndFeed data, boolean updated) {
+			this.data = data;
+			this.updated = updated;
+		}
 	}
 }

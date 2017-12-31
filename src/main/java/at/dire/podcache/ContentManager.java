@@ -34,16 +34,17 @@ public class ContentManager {
 	/** Logger */
 	private static final Logger LOG = LoggerFactory.getLogger(ContentManager.class);
 
-	/** Used to hold the feed's RSS feed. */
-	private static final String FEED_FILE = "_feed.xml";
+	/** Used to hold the original feed's file. */
+	public static final String ORIGINAL_FEED_FILE = "_feed.origin.xml";
+
+	/** Used to hold the feed's file. */
+	public static final String FEED_FILE = "_feed.xml";
 
 	/** Component for downloading files */
 	private final Downloader downloader;
 
 	/** The root directory to hold all files. Use Spring configuration. */
 	private final Path dataDir;
-
-	// private final ReentrantReadWriteLock fileAccessLock = new reeent
 
 	/**
 	 * Creates a new instance.
@@ -100,11 +101,12 @@ public class ContentManager {
 	 * Download the given feed and return a response. Will also update the feed's modification date if needed.
 	 * 
 	 * @param feed the feed
+	 * @param force true to force download, ignoring {@link Feed#getLastModified()}
 	 * @return response
 	 * @throws IOException when the download fails
 	 */
-	public DownloadResponse download(Feed feed) throws IOException {
-		DownloadResponse response = this.downloader.request(feed.getUrl(), feed.getLastModified());
+	public DownloadResponse download(Feed feed, boolean force) throws IOException {
+		DownloadResponse response = this.downloader.request(feed.getUrl(), (force ? null : feed.getLastModified()));
 
 		if(!response.isUnchanged()) {
 			// Set feed properties.
@@ -120,11 +122,12 @@ public class ContentManager {
 	 * {@link Feed#getLastModified() up-to-date}. This will also update this modification date automatically.
 	 * 
 	 * @param feed the feed
+	 * @param force true to force download, ignoring {@link Feed#getLastModified()}
 	 * @return new feed or null
 	 * @throws IOException when the download fails
 	 */
-	public @Nullable SyndFeed downloadFeed(Feed feed) throws IOException {
-		try(DownloadResponse response = download(feed)) {
+	public @Nullable SyndFeed downloadFeed(Feed feed, boolean force) throws IOException {
+		try(DownloadResponse response = download(feed, force)) {
 			// Unchanged?
 			if(response.isUnchanged())
 				return null;
@@ -137,12 +140,13 @@ public class ContentManager {
 	 * Downloads the feed file for the given feed. Will also update the feed's modification date if needed.
 	 * 
 	 * @param feed the feed
+	 * @param fileName filename to use
 	 * @return path to the feed's file
 	 * @throws IOException when the download fails
 	 */
-	public Path downloadToFile(Feed feed) throws IOException {
+	public Path downloadToFile(Feed feed, String fileName) throws IOException {
 		Path feedDir = createFeedDir(feed.getName());
-		Path targetFile = feedDir.resolve(FEED_FILE);
+		Path targetFile = feedDir.resolve(fileName);
 
 		downloadToFile(feed, targetFile);
 		return targetFile;
@@ -212,24 +216,12 @@ public class ContentManager {
 		Path targetFile = feedDir.resolve(Paths.get(url.getFile()).getFileName());
 		// TODO: Problematic. Need to make sure that names contain no invalid characters. Unlikely in URL.
 
-		if(overwrite || Files.notExists(targetFile)) {
+		if(overwrite || Files.notExists(targetFile))
 			this.downloader.download(url, targetFile, null);
-		} else
-			LOG.debug("Not overwriting existing '{}'.", targetFile);
+		else
+			LOG.debug("File '{}' already exists. Not downloading.", targetFile);
 
 		return targetFile;
-	}
-
-	/**
-	 * Returns the path to the feed file, i.e. the one containing the RSS/ATOM content.
-	 * 
-	 * Note that the path returned may not point to an existing file.
-	 * 
-	 * @param feedName name of the feed
-	 * @return path to the file
-	 */
-	public Path getFeedFile(String feedName) {
-		return getFeedDir(feedName).resolve(FEED_FILE);
 	}
 
 	/**
