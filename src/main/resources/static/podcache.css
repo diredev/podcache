@@ -15,7 +15,11 @@ h2 {
 	margin-top: 0px;
 	padding-left: 10px;
 	border-bottom: solid 2px #c8effc;
-	box-shadow: 2px 2px #dcf1f8;
+	box-shadow: 0 4px 2px -2px #dcf1f8;
+}
+
+div.block {
+	padding-bottom: 15px;
 }
 
 /* Fix for vertical forms (Bootstrap) */
@@ -42,9 +46,17 @@ th:first-child {
 	border-top-left-radius: 10px;
 }
 
-table {
+table.feed-table {
+	table-layout: fixed;
 	border-radius: 20px;
 	border: none !important;
+	width: 100%;
+}
+
+table.feed-table td, table.feed-table th {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	 max-width: 0;
 }
 
 /* Change the style of the striped tables. */
