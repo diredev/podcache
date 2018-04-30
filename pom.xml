@@ -33,6 +33,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 
 				<configuration>
+					<executable>true</executable>
 					<excludes>
 						<!-- Exclude the checker compile dependencies. No need for those in the final JAR. -->
 						<exclude>
