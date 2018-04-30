@@ -2,7 +2,7 @@ package at.dire.podcache.util;
 
 import java.util.Date;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.lang.Nullable;
 
 /**
  * A downloaded resource.

@@ -9,12 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.PostPersist;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -24,9 +23,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @Entity
 public class Feed implements Persistable<String> {
-	/** Serialization ID */
-	private static final long serialVersionUID = -3159638072818458018L;
-
 	/** Unique name for this feed. */
 	@Id
 	private String name;
@@ -232,14 +228,13 @@ public class Feed implements Persistable<String> {
 	}
 
 	@Override
-	@JsonIgnore
 	@Transient
 	public String getId() {
 		return this.name;
 	}
 
 	@Override
-	@JsonIgnore
+	@Transient
 	public boolean isNew() {
 		return isNew;
 	}

@@ -1,6 +1,5 @@
 package at.dire.podcache.service;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Date;
@@ -108,13 +107,10 @@ public class ContentController {
 
 		// Fix download of files as "f.txt" when extensions aren't matched (".+" above) by adding our own filename.
 		// See https://pivotal.io/security/cve-2015-5211 for details on this behavior.
-		try {
-			HttpHeaders headers = new HttpHeaders();
-			responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,"inline; filename=" + UriUtils.encodePathSegment(file.getFileName().toString(), "UTF-8"));
-			responseBuilder.headers(headers);
-		} catch(UnsupportedEncodingException e) {
-			throw new RuntimeException("Failed to encode filename due to encoding. This is not supposed to happen.", e);
-		}
+		HttpHeaders headers = new HttpHeaders();
+		responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,
+				"inline; filename=" + UriUtils.encodePathSegment(file.getFileName().toString(), "UTF-8"));
+		responseBuilder.headers(headers);
 
 		return responseBuilder.body(resource);
 	}

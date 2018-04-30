@@ -7,10 +7,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.regex.Pattern;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,7 +159,7 @@ public class FeedManager {
 	 */
 	@Transactional
 	public void update(Iterable<Feed> feeds) {
-		this.feedRepo.save(feeds);
+		this.feedRepo.saveAll(feeds);
 	}
 
 	/**

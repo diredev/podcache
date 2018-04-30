@@ -6,8 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.8.RELEASE</version>
-		<relativePath />
+		<version>2.0.1.RELEASE</version>
 	</parent>
 
 	<groupId>at.dire.podcache</groupId>
@@ -16,14 +15,13 @@
 	<packaging>jar</packaging>
 
 	<name>podcache</name>
-	<description>A microservice that downloads podcasts, stores them locally and provides permanent access.</description>
+	<description>A tiny service that provide permanent access to configured podcasts.</description>
 	<url>https://github.com/diredev/podcache</url>
 	<inceptionYear>2017</inceptionYear>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<checkerframework.version>2.2.2</checkerframework.version>
 	</properties>
 
 	<build>
@@ -34,30 +32,6 @@
 
 				<configuration>
 					<executable>true</executable>
-					<excludes>
-						<!-- Exclude the checker compile dependencies. No need for those in the final JAR. -->
-						<exclude>
-							<groupId>org.checkerframework</groupId>
-							<artifactId>checker</artifactId>
-						</exclude>
-						<exclude>
-							<groupId>org.checkerframework</groupId>
-							<artifactId>jdk8</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-
-			<!-- Compiler with Checker Framework -->
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-
-					<annotationProcessors>
-						<annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
-					</annotationProcessors>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -100,26 +74,6 @@
 			<groupId>com.rometools</groupId>
 			<artifactId>rome</artifactId>
 			<version>1.9.0</version>
-		</dependency>
-
-		<!-- Checker Framework -->
-		<dependency>
-			<groupId>org.checkerframework</groupId>
-			<artifactId>checker-qual</artifactId>
-			<version>${checkerframework.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.checkerframework</groupId>
-			<artifactId>checker</artifactId>
-			<version>${checkerframework.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.checkerframework</groupId>
-			<artifactId>jdk8</artifactId>
-			<version>${checkerframework.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
