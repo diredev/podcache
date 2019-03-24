@@ -21,18 +21,15 @@ public class FeedURLBuilder {
 	/**
 	 * Creates a new instance.
 	 * 
-	 * @param host server host name
-	 * @param port port
-	 * @param contextPath context path
+	 * @param baseUrl base URL for file access
 	 */
 	@Autowired
-	public FeedURLBuilder(@Value("${server.address:localhost}") String host,
-			@Value("${server.port:8080}") int port, @Value("${server.contextPath:/}") String contextPath) {
+	public FeedURLBuilder(@Value("${podcache.content.url}") String baseUrl) {
 		try {
-			this.baseURL = new URL("http", host, port, "");
+			this.baseURL = new URL(baseUrl);
 		} catch(MalformedURLException e) {
 			throw new IllegalArgumentException(String.format(
-					"Invalid host (%s), port (%d) or contextPath (%s) to create URL.", host, port, contextPath), e);
+					"Invalid base URL %s.", baseUrl), e);
 		}
 	}
 
@@ -45,7 +42,7 @@ public class FeedURLBuilder {
 	 */
 	public URL getURL(String feedName, String fileName) {
 		try {
-			return new URL(baseURL, "content/" + feedName + "/" + fileName);
+			return new URL(baseURL, feedName + "/" + fileName);
 		} catch(MalformedURLException e) {
 			throw new IllegalArgumentException("Invalid url", e);
 		}

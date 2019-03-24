@@ -9,6 +9,10 @@ podcache:
   # Directory for feed content files.
   content.directory: ${podcache.data.directory}/feeds
   
+  # Configure content URL to access files.
+  content.url.protocol: http
+  content.url: ${podcache.content.url.protocol}://${server.address:localhost}:${server.port:8080}/${server.contextPath:}/content/
+  
   # Interval for automatic update in 'cron' format. Use "0 1 0 * * ?" for daily at 1 AM.
   update.interval: "0 1 0 * * ?"
 
